@@ -1,0 +1,5 @@
+.DS_Store
+.git
+*.log
+node_modules
+yarn.*

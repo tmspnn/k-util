@@ -1,0 +1,33 @@
+{
+  "name": "k-util",
+  "version": "0.1.1",
+  "description": "Utility functions of komponentize.js",
+  "main": "dist/k-util.cjs.js",
+  "jsnext:main": "k-util.js",
+  "scripts": {
+    "build": "npm run build-cjs && npm run build-iife",
+    "build-cjs": "rollup -c -f cjs -o dist/k-util.cjs.js",
+    "build-iife": "rollup -c -f iife -o dist/k-util.min.js -n kUtil"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tmspnn/komponentize.git"
+  },
+  "keywords": [
+    "util",
+    "k-util"
+  ],
+  "author": "Thomas Peng",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-external-helpers": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-runtime": "^6.20.0",
+    "eslint": "^3.13.1",
+    "rollup": "^0.36.4",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-uglify": "^1.0.1"
+  }
+}
