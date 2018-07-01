@@ -1,7 +1,7 @@
 {
   "name": "k-util",
   "version": "0.2.0",
-  "description": "Useful utility functions",
+  "description": "A small set of utility functions",
   "main": "dist/k-util.js",
   "scripts": {
     "test": "jest",
