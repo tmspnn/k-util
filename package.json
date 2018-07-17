@@ -1,8 +1,9 @@
 {
   "name": "k-util",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A small set of utility functions",
   "main": "dist/k-util.js",
+  "types": "src/k-util.d.ts",
   "scripts": {
     "test": "jest",
     "build": "tsc && NODE_ENV=production webpack"
@@ -18,7 +19,7 @@
   "license": "MIT",
   "devDependencies": {
     "awesome-typescript-loader": "^5.0.0",
-    "jest": "^23.1.0",
+    "jest": "^23.4.1",
     "jsdom": "^11.11.0",
     "source-map-loader": "^0.2.3",
     "typescript": "^2.9.2"
