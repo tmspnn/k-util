@@ -1,12 +1,12 @@
 {
   "name": "k-util",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A small set of utility functions",
   "main": "dist/k-util.js",
-  "types": "src/k-util.d.ts",
+  "types": "types/k-util.d.ts",
   "scripts": {
-    "test": "jest",
-    "build": "tsc && NODE_ENV=production webpack"
+    "build": "NODE_ENV=production webpack",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -18,10 +18,10 @@
   "author": "Thomas Peng",
   "license": "MIT",
   "devDependencies": {
-    "awesome-typescript-loader": "^5.0.0",
-    "jest": "^23.4.1",
-    "jsdom": "^11.11.0",
-    "source-map-loader": "^0.2.3",
-    "typescript": "^2.9.2"
+    "awesome-typescript-loader": "^5.2.1",
+    "jest": "^24.9.0",
+    "jsdom": "^15.1.1",
+    "source-map-loader": "^0.2.4",
+    "typescript": "^3.5.3"
   }
 }
