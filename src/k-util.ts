@@ -1,45 +1,58 @@
-export function isInt(v: any): boolean {
-  return typeof v == 'number' && (v | 0) == v;
+export function isInt(v: any) {
+  return typeof v == "number" && (v | 0) == v;
 }
 
-export function isString(v: any): boolean {
-  return typeof v == 'string';
+export function isString(v: any) {
+  return typeof v == "string";
 }
 
-export function isFunction(v: any): boolean {
-  return typeof v == 'function';
+export function isFunction(v: any) {
+  return typeof v == "function";
 }
 
-export function isArray(v: any): boolean {
+export function isArray(v: any) {
   return v instanceof Array;
 }
 
-export function isObject(v: any): boolean {
-  return v instanceof Object;
+export function isObject(v: any) {
+  return v != null && typeof v == "object";
 }
 
-export function isNull(v: any): boolean {
+export function isNaN(v: any) {
+  return v != v;
+}
+
+export function isNull(v: any) {
   return v == null;
 }
 
-export function isJSON(v: any): boolean {
+export function isJSON(v: any) {
   try {
-    return typeof JSON.parse(v) == 'object';
+    return typeof JSON.parse(v) == "object";
   } catch (e) {
     return false;
   }
 }
 
-export function toArray(v: object): Array<any> {
+export const isBrowser: boolean = new Function(`
+try {
+  return this == window;
+} catch (e) {
+  return false;
+}`)();
+
+export function toArray(v: { [k: string]: any }) {
   return Array.prototype.slice.call(v);
 }
 
-export function get(o: any, path: string): any {
-  if (typeof o == 'string' || o instanceof Object) {
+export function getPropByPath(o: any, path: string): any {
+  if (typeof o == "string" || o instanceof Object) {
     const paths: string[] | null = path.match(/[^\.\[\]\'\"]+/gi);
     if (paths) {
       paths[0] = o[paths[0]];
-      return paths.reduce((result: any, key: string): any => (result ? result[key] : null));
+      return paths.reduce((result: any, key: string): any => {
+        return result instanceof Object ? result[key] : null;
+      });
     }
   }
   return null;
@@ -49,10 +62,9 @@ export function last(a: Array<any>): any {
   return a[a.length - 1];
 }
 
-export function each(o: any, f: (v: any, k: number | string) => any) {
-  if (!(o instanceof Object)) return;
+export function each(o: { [k: string]: any }, f: (v: any, k: number | string) => void) {
   if (o.length) {
-    for (let i = 0; i < o.length; i++) {
+    for (let i = 0, len = o.length; i < len; ++i) {
       f(o[i], i);
     }
   } else {
