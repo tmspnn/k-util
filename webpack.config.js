@@ -1,26 +1,28 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  entry: __dirname + '/src/k-util.ts',
-  mode: 'production',
+  mode: "production",
+  devtool: "cheap-eval-source-map",
+  context: __dirname + "/src",
+  entry: __dirname + "/src/k-util.ts",
   output: {
-    path: __dirname + '/dist',
-    filename: 'k-util.min.js',
-    library: 'kUtil',
-    libraryTarget: 'umd'
+    path: __dirname + "/dist",
+    filename: "k-util.js",
+    library: "kUtil",
+    libraryTarget: "umd",
+    globalObject: "this"
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'awesome-typescript-loader'
+        loader: "awesome-typescript-loader"
       },
       {
-        enforce: 'pre',
+        enforce: "pre",
         test: /\.js$/,
-        loader: 'source-map-loader'
+        loader: "source-map-loader"
       }
     ]
-  },
-  devtool: '#nosources-source-map'
+  }
 };
