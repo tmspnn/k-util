@@ -27,6 +27,8 @@ isNull(v: any): boolean;
 
 isJSON(v: any): boolean;
 
+parseJSON(v: string): any;
+
 isBrowser: boolean;
 
 toArray(v: { [k: string]: any }): Array<any>;

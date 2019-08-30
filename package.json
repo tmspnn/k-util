@@ -1,11 +1,11 @@
 {
   "name": "k-util",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A small set of utility functions",
   "main": "dist/k-util.js",
   "types": "types/k-util.d.ts",
   "scripts": {
-    "build": "NODE_ENV=production webpack",
+    "build": "rm -rf dist/* && NODE_ENV=production webpack",
     "test": "jest"
   },
   "repository": {

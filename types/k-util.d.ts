@@ -16,6 +16,8 @@ export function isNull(v: any): boolean;
 
 export function isJSON(v: any): boolean;
 
+export function parseJSON(v: string): any;
+
 export const isBrowser: boolean;
 
 export function toArray(v: { [k: string]: any }): Array<any>;

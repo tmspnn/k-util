@@ -34,6 +34,14 @@ export function isJSON(v: any) {
   }
 }
 
+export function parseJSON(v: string): any {
+  try {
+    return JSON.parse(v);
+  } catch (e) {
+    return null;
+  }
+}
+
 export const isBrowser: boolean = new Function(`
 try {
   return this == window;
