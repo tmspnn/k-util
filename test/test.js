@@ -97,15 +97,17 @@ test("each", (t) => {
   const { each } = kutil;
 
   const a = [1, 2, 3];
+  const a1 = [];
   const b = { x: 9, y: 8, z: 7 };
+  const b1 = {};
 
-  each(a, (v) => v + 1);
-  t.is(a[0], 2);
-  t.is(a[1], 3);
-  t.is(a[2], 4);
+  each(a, (v, i) => a1.push(v + i));
+  t.is(a1[0], 1);
+  t.is(a1[1], 3);
+  t.is(a1[2], 5);
 
-  each(b, (v) => v - 1);
-  t.is(b.x, 8);
-  t.is(b.y, 7);
-  t.is(b.z, 6);
+  each(b, (v, k) => (b1[k] = v - 1));
+  t.is(b1.x, 8);
+  t.is(b1.y, 7);
+  t.is(b1.z, 6);
 });

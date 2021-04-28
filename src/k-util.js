@@ -43,12 +43,12 @@ export function at(o, path) {
 export function each(o, f) {
   if (o.length) {
     for (let i = 0; i < o.length; ++i) {
-      o[i] = f(o[i], i);
+      f(o[i], i);
     }
   } else {
     for (let i in o) {
       if (o.hasOwnProperty(i)) {
-        o[i] = f(o[i], i);
+        f(o[i], i);
       }
     }
   }
