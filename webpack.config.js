@@ -1,27 +1,29 @@
-"use strict";
-
 module.exports = {
   mode: "production",
-  devtool: "cheap-eval-source-map",
+  devtool: "cheap-module-source-map",
   context: __dirname + "/src",
-  entry: __dirname + "/src/k-util.ts",
+  entry: "./k-util.js",
   output: {
     path: __dirname + "/dist",
     filename: "k-util.js",
-    library: "kUtil",
-    libraryTarget: "umd",
+    library: {
+      name: "kutil",
+      type: "umd2",
+      export: "default"
+    },
     globalObject: "this"
   },
   module: {
     rules: [
       {
-        test: /\.ts$/,
-        loader: "awesome-typescript-loader"
-      },
-      {
-        enforce: "pre",
-        test: /\.js$/,
-        loader: "source-map-loader"
+        test: /\.?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [["@babel/preset-env"]]
+          }
+        }
       }
     ]
   }
