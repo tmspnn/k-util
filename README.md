@@ -29,7 +29,7 @@ parseJSON("foobar"); // null
 parseJSON(0); // 0
 parseJSON(JSON.stringify({ a: 1 })); // { a: 1 }
 
-isBrowser; // true in browser, false in node
+isBrowser(); // true in browser, false in node
 
 Array.isArray(toArray(document.querySelectorAll(".my-elements"))); // true;
 
