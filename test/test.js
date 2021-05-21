@@ -68,10 +68,10 @@ test("isBrowser", (t) => {
   with (dom.window) {
     const { isBrowser } = kutil;
 
-    t.is(isBrowser, true);
+    t.is(isBrowser(), true);
   }
 
-  t.is(kutil.isBrowser, false);
+  t.is(kutil.isBrowser(), false);
 });
 
 test("toArray", (t) => {

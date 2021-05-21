@@ -6,7 +6,7 @@ export function isJSON(v: any): boolean;
 
 export function parseJSON(v: any): null | { [k: string]: any };
 
-export const isBrowser: boolean;
+export function isBrowser(): boolean;
 
 export function toArray(v: { [k: string]: any }): Array<any>;
 

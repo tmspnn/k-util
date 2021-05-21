@@ -18,12 +18,13 @@ export function parseJSON(v) {
   }
 }
 
-export const isBrowser = new Function(`
-try {
-  return this == window;
-} catch (e) {
-  return false;
-}`)();
+export function isBrowser() {
+  return new Function(`try {
+    return this == window;
+  } catch (e) {
+    return false;
+  }`)();
+}
 
 export function toArray(v) {
   return Array.prototype.slice.call(v);
