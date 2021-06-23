@@ -22,56 +22,78 @@ const dom = new JSDOM(
   </ul>
   <script>${kutilJS}</script>
 </body>
-</html>
-`,
+</html>`,
   {
     runScripts: "dangerously"
   }
 );
 
-// Run testcases
-test("var", (t) => {
-  with (dom.window) {
-    t.is(typeof kutil, "object");
-  }
+test("at", (t) => {
+  const { at } = kutil;
+
+  const a = [{}, { a: { b: [1, 2, { c: [1, 2, { d: 99 }] }] } }];
+
+  t.is(at(a, "[1].a.b[2].c[2].d"), 99);
 });
 
-test("isInt", (t) => {
-  const { isInt } = kutil;
+test("each", (t) => {
+  const { each } = kutil;
 
-  t.is(isInt(0), true);
-  t.is(isInt(0.1), false);
+  const a = [{}, {}, {}];
+  const b = { x: {}, y: {}, z: {} };
+
+  each(a, (v, i) => (v.idx = i));
+  each(b, (v, k) => (v.key = k));
+
+  t.is(a[2].idx, 2);
+  t.is(b.z.key, "z");
 });
 
-test("isJSON", (t) => {
-  const { isJSON } = kutil;
+test("Ee", (t) => {
+  const { Ee } = kutil;
 
-  t.is(isJSON(undefined), false);
-  t.is(isJSON(null), false);
-  t.is(isJSON(1), false);
-  t.is(isJSON(""), false);
-  t.is(isJSON(JSON.stringify({ a: 1 })), true);
+  const ee = new Ee();
+  let v = 0;
+
+  ee.on("test_channel", (x) => (v = x));
+  ee.emit("test_channel", 100);
+  t.is(v, 100);
+
+  ee.off("test_channel");
+  ee.emit("test_channel", 200);
+  t.is(v, 100);
 });
 
-test("parseJSON", (t) => {
-  const { parseJSON } = kutil;
-
-  t.is(parseJSON(undefined), null);
-  t.is(parseJSON(null), null);
-  t.is(parseJSON("null"), null);
-  t.is(parseJSON("foobar"), null);
-  t.is(parseJSON(0), 0);
-  t.is(parseJSON(JSON.stringify({ a: 1 })).a, 1);
+test("int", (t) => {
+  const { int } = kutil;
+  const a = int(1.234);
+  t.is(a, 1);
 });
 
 test("isBrowser", (t) => {
   with (dom.window) {
     const { isBrowser } = kutil;
-
     t.is(isBrowser(), true);
   }
+});
 
-  t.is(kutil.isBrowser(), false);
+test("parseJSON", (t) => {
+  const { parseJSON } = kutil;
+
+  const a = parseJSON(undefined);
+  const b = parseJSON('{"foo": 1}');
+
+  t.is(a, null);
+  t.is(b.foo, 1);
+});
+
+test("put", (t) => {
+  const { put } = kutil;
+
+  const a = [{ a: [1, 2, { x: 0 }] }];
+  put(a, "[0].a[2].y", [1, 2, 3]);
+
+  t.is(a[0].a[2].y[2], 3);
 });
 
 test("toArray", (t) => {
@@ -81,33 +103,4 @@ test("toArray", (t) => {
     const lists = toArray(document.querySelectorAll("li"));
     t.is(Array.isArray(lists), true);
   }
-});
-
-test("at", (t) => {
-  const { at } = kutil;
-
-  const s = "123";
-  const o = { a: { b: [{ c: [1, 2, 3] }] } };
-
-  t.is(at(s, 1), "2");
-  t.is(at(o, "a.b[0].c[2]"), 3);
-});
-
-test("each", (t) => {
-  const { each } = kutil;
-
-  const a = [1, 2, 3];
-  const a1 = [];
-  const b = { x: 9, y: 8, z: 7 };
-  const b1 = {};
-
-  each(a, (v, i) => a1.push(v + i));
-  t.is(a1[0], 1);
-  t.is(a1[1], 3);
-  t.is(a1[2], 5);
-
-  each(b, (v, k) => (b1[k] = v - 1));
-  t.is(b1.x, 8);
-  t.is(b1.y, 7);
-  t.is(b1.z, 6);
 });

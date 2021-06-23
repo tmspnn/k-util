@@ -1,6 +1,6 @@
 module.exports = {
   mode: "production",
-  devtool: "cheap-module-source-map",
+  devtool: false,
   context: __dirname + "/src",
   entry: "./k-util.js",
   output: {
@@ -14,17 +14,6 @@ module.exports = {
     globalObject: "this"
   },
   module: {
-    rules: [
-      {
-        test: /\.?js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [["@babel/preset-env"]]
-          }
-        }
-      }
-    ]
+    rules: []
   }
 };

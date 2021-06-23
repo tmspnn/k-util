@@ -1,6 +1,6 @@
 # k-util
 
-A small set of JavaScript utility functions
+A small set of JavaScript utility functions, **1.4KB** Gzipped
 
 ## Installation
 
