@@ -7,10 +7,12 @@ const assign = Object.assign;
 const keys = Object.keys;
 const isArray = Array.isArray;
 
-let ee = window._ee;
+const ENV = typeof window == "undefined" ? global : window;
+
+let ee = ENV._ee;
 
 if (!ee) {
-  ee = window._ee = new Ee();
+  ee = ENV._ee = new Ee();
 }
 
 const View = Klass({
