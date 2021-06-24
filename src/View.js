@@ -3,10 +3,15 @@ import Ee from "./Ee";
 import Klass from "./Klass";
 import put from "./put";
 
-const ee = new Ee();
 const assign = Object.assign;
 const keys = Object.keys;
 const isArray = Array.isArray;
+
+let ee = window._ee;
+
+if (!ee) {
+  ee = window._ee = new Ee();
+}
 
 const View = Klass({
   namespace: "global",
@@ -81,9 +86,6 @@ const View = Klass({
   onBroadcast() {},
 
   _eventHandler(method, ...args) {
-    console.log("name: ", this.name);
-    console.log("method: ", method);
-
     if (typeof this[method] == "function") {
       this[method].call(this, ...args);
     }
