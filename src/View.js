@@ -22,7 +22,7 @@ const View = Klass({
   bindings: {},
 
   constructor() {
-    this.namespace = location.href;
+    this.namespace = location.pathname;
   },
 
   bindData(data) {
@@ -90,6 +90,7 @@ const View = Klass({
   },
 
   _createBindings(el) {
+    this.bindings = {};
     for (let k in el.dataset) {
       if (el.dataset.hasOwnProperty(k)) {
         switch (k) {
