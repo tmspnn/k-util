@@ -4,7 +4,7 @@ const setPrototypeOf = Object.setPrototypeOf;
 
 /**
  * @param {Object} props
- * @param {Function} props.constructor?
+ * @param {Function} props.constructor
  * @param {Function} Base
  */
 export default function Klass(props, Base) {

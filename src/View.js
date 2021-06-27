@@ -5,7 +5,6 @@ import put from "./put";
 
 const assign = Object.assign;
 const keys = Object.keys;
-const isArray = Array.isArray;
 
 const ENV = typeof window == "undefined" ? global : window;
 
@@ -16,47 +15,41 @@ if (!ee) {
 }
 
 const View = Klass({
-  namespace: "global",
+  namespace: "",
 
   name: "",
 
   element: null,
 
-  refs: {},
+  refs: null,
 
   data: null,
 
-  bindings: {},
+  bindings: null,
 
   constructor() {
-    this.namespace = location.pathname;
+    this.namespace = ENV.location
+      ? ENV.location.pathname
+      : ENV.process.title + " " + ENV.process.version;
   },
 
-  bindData(data) {
-    if (data) {
-      if (this.data) {
-        assign(this.data, data);
-      } else {
-        this.data = data;
-      }
-    }
-
-    if (this.element) {
-      this._createBindings(this.element);
-    }
-  },
-
+  /**
+   * @param {String|Object} k
+   * @param {*} v
+   */
   setData(k, v) {
+    if (!this.data) this.data = {};
+
     if (typeof k == "string") {
       if (typeof v == "function") {
-        v(this.data[k]);
+        v(at(this.data, k));
       } else {
-        this.data[k] = v;
+        put(this.data, k, v);
       }
       this._onDataUpdate(k);
     } else if (k instanceof Object) {
       assign(this.data, k);
-      this._onDataUpdate(keys(k));
+      keys(k).forEach((key) => this._onDataUpdate(key));
     }
   },
 
@@ -93,72 +86,70 @@ const View = Klass({
     }
   },
 
+  _onDataUpdate(k) {
+    if (!this.bindings && this.element) {
+      this._createBindings(this.element);
+    }
+
+    if (this.bindings[k]) {
+      for (const f of this.bindings[k]) {
+        f.call(this);
+      }
+    }
+  },
+
   _createBindings(el) {
     this.bindings = {};
-    for (let k in el.dataset) {
-      if (el.dataset.hasOwnProperty(k)) {
-        switch (k) {
-          case "ref":
-            this.refs[el.dataset.ref] = el;
-            break;
-          case ":":
-            el.dataset[":"].split(";").forEach((pair) => {
-              const p = pair.split(":").map((txt) => txt.trim());
-              const attr = p[0];
-              const dataProp = p[1];
 
-              if (!dataProp) return;
+    for (const d of el.dataset) {
+      switch (d) {
+        case "ref":
+          if (!this.refs) this.refs = {};
+          this.refs[el.dataset.ref] = el;
+          break;
+        case ":":
+          for (const pair of el.dataset[":"].split(";")) {
+            const p = pair.split(":").map((txt) => txt.trim());
+            const attr = p[0];
+            const dataProp = p[1];
 
-              let f;
+            if (!dataProp) return;
 
-              if (attr[0] == "@") {
-                f = () => this[attr.slice(1)]();
-              } else {
-                f = () => put(el, attr, at(this.data, dataProp));
-              }
+            const bd =
+              attr[0] == "@"
+                ? function () {
+                    this[attr.slice(1)]();
+                  }
+                : function () {
+                    put(el, attr, at(this.data, dataProp));
+                  };
 
-              const bKey = dataProp.match(/[^\.[]+/)[0];
+            const bKey = dataProp.match(/[^\.[]+/)[0];
 
-              if (!this.bindings[bKey]) {
-                this.bindings[bKey] = [f];
-              } else {
-                this.bindings[bKey].push(f);
-              }
-            });
-            break;
-          case "on":
-            el.dataset.on.split(";").forEach((pair) => {
-              const p = pair.split(":").map((txt) => txt.trim());
-              const e = p[0];
-              const h = p[1];
-              if (e && typeof this[h] == "function") {
-                el.addEventListener(e, this[h].bind(this));
-              }
-            });
-            break;
-          default:
-            break;
-        }
+            if (!this.bindings[bKey]) {
+              this.bindings[bKey] = [bd];
+            } else {
+              this.bindings[bKey].push(bd);
+            }
+          }
+          break;
+        case "on":
+          for (const pair of el.dataset.on.split(";")) {
+            const p = pair.split(":").map((txt) => txt.trim());
+            const e = p[0];
+            const h = p[1];
+            if (e && typeof this[h] == "function") {
+              el.addEventListener(e, this[h].bind(this));
+            }
+          }
+          break;
+        default:
+          break;
       }
     }
 
-    for (let i = 0; i < el.children.length; ++i) {
-      this._createBindings(el.children[i]);
-    }
-  },
-
-  _onDataUpdate(arg) {
-    if (typeof arg == "string") {
-      this._mutate(arg);
-    } else if (isArray(arg)) {
-      arg.forEach((a) => this._mutate(a));
-    }
-  },
-
-  _mutate(bKey) {
-    const binding = this.bindings[bKey];
-    if (binding) {
-      binding.forEach((f) => f());
+    for (const ch of el.children) {
+      this._createBindings(ch);
     }
   }
 });

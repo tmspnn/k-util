@@ -40,11 +40,10 @@ export function View(): (...args: any[]) => {
   namespace: string;
   name: string;
   element: null | HTMLElement;
-  refs: { [k: string]: HTMLElement };
+  refs: null | { [k: string]: HTMLElement };
   data: null | { [k: string]: any };
-  bindings: { [k: string]: () => void };
+  bindings: null | { [k: string]: () => void };
   constructor: (...args: any[]) => any;
-  bindData: (data: { [k: string]: any }) => void;
   setData: (k: string | { [k: string]: any }, v: any) => void;
   dispatch: (ptn: string, ...args: any[]) => void;
   listen: () => void;
@@ -53,5 +52,4 @@ export function View(): (...args: any[]) => {
   _eventHandler: (method: string, ...args: any[]) => void;
   _createBindings: (el: HTMLElement) => void;
   _onDataUpdate: (arg: string | string[]) => void;
-  _mutate: () => void;
 };

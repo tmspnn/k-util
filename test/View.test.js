@@ -40,7 +40,7 @@ test("Data binding", (t) => {
         constructor() {
           this.Super();
           this.element = document.getElementById("test");
-          this.bindData({ clickTimes: 0 });
+          this.setData({ clickTimes: 0 });
         },
 
         onBtnClick() {
