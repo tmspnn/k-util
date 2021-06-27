@@ -88,7 +88,8 @@ const View = Klass({
   },
 
   _onDataUpdate(k) {
-    if (!this.bindings && this.element) {
+    if (!this.bindings) {
+      this.bindings = {};
       this._createBindings(this.element);
     }
 
@@ -100,7 +101,7 @@ const View = Klass({
   },
 
   _createBindings(el) {
-    this.bindings = {};
+    if (!(el instanceof HTMLElement)) return;
 
     each(el.dataset, (v, k) => {
       switch (k) {
