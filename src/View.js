@@ -51,6 +51,8 @@ const View = Klass({
     } else if (k instanceof Object) {
       assign(this.data, k);
       keys(k).forEach((key) => this._onDataUpdate(key));
+    } else {
+      this._onDataUpdate();
     }
   },
 
