@@ -1,4 +1,5 @@
 import at from "./at";
+import each from "./each";
 import Ee from "./Ee";
 import Klass from "./Klass";
 import put from "./put";
@@ -92,23 +93,23 @@ const View = Klass({
     }
 
     if (this.bindings[k]) {
-      for (const f of this.bindings[k]) {
+      each(this.bindings[k], (f) => {
         f.call(this);
-      }
+      });
     }
   },
 
   _createBindings(el) {
     this.bindings = {};
 
-    for (const d of el.dataset) {
-      switch (d) {
+    each(el.dataset, (v, k) => {
+      switch (k) {
         case "ref":
           if (!this.refs) this.refs = {};
-          this.refs[el.dataset.ref] = el;
+          this.refs[v] = el;
           break;
         case ":":
-          for (const pair of el.dataset[":"].split(";")) {
+          each(v.split(";"), (pair) => {
             const p = pair.split(":").map((txt) => txt.trim());
             const attr = p[0];
             const dataProp = p[1];
@@ -131,26 +132,26 @@ const View = Klass({
             } else {
               this.bindings[bKey].push(bd);
             }
-          }
+          });
           break;
         case "on":
-          for (const pair of el.dataset.on.split(";")) {
+          each(v.split(";"), (pair) => {
             const p = pair.split(":").map((txt) => txt.trim());
             const e = p[0];
             const h = p[1];
             if (e && typeof this[h] == "function") {
               el.addEventListener(e, this[h].bind(this));
             }
-          }
+          });
           break;
         default:
           break;
       }
-    }
+    });
 
-    for (const ch of el.children) {
+    each(el.children, (ch) => {
       this._createBindings(ch);
-    }
+    });
   }
 });
 
