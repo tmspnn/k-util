@@ -69,7 +69,7 @@ const View = Klass({
   },
 
   destroy() {
-    if (document.documentElement.contains(this.element)) {
+    if (document.body.contains(this.element)) {
       this.element.parentNode.removeChild(this.element);
       this.element = null;
     }
@@ -104,6 +104,9 @@ const View = Klass({
 
   _createBindings(el) {
     if (!(el instanceof HTMLElement)) return;
+
+    if (/^-\w|\s+-\w/.test(el.className) || el.hasAttribute("data-view"))
+      return;
 
     each(el.dataset, (v, k) => {
       switch (k) {
