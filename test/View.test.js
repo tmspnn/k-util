@@ -51,7 +51,7 @@ test("Data binding", (t) => {
 
         customCallBackCalled: 0,
 
-        customCallBask() {
+        customCallBack() {
           ++this.customCallBackCalled;
         }
       },

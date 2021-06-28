@@ -4,7 +4,7 @@ import Ee from "./Ee";
 import Klass from "./Klass";
 import put from "./put";
 
-const assign = Object.assign;
+const isArray = Array.isArray;
 const keys = Object.keys;
 
 const ENV = typeof window == "undefined" ? global : window;
@@ -22,11 +22,11 @@ const View = Klass({
 
   element: null,
 
-  refs: null,
+  refs: {},
 
-  data: null,
+  data: {},
 
-  bindings: null,
+  bindings: {},
 
   constructor() {
     this.namespace = ENV.location
@@ -39,20 +39,34 @@ const View = Klass({
    * @param {*} v
    */
   setData(k, v) {
-    if (!this.data) this.data = {};
-
-    if (typeof k == "string") {
-      if (typeof v == "function") {
-        v(at(this.data, k));
-      } else {
-        put(this.data, k, v);
-      }
-      this._onDataUpdate(k);
-    } else if (k instanceof Object) {
-      assign(this.data, k);
-      keys(k).forEach((key) => this._onDataUpdate(key));
-    } else {
-      this._onDataUpdate();
+    switch (typeof k) {
+      case "string":
+        if (typeof v == "function") {
+          v(at(this.data, k));
+        } else {
+          put(this.data, k, v);
+        }
+        this._onDataUpdate(k);
+        break;
+      case "object":
+        if (k) {
+          each(k, (value, key) => {
+            put(this.data, key, value);
+            this._onDataUpdate(key);
+          });
+        }
+        break;
+      case "function":
+        const updatedKeys = k(this.data);
+        if (typeof updatedKeys == "string") {
+          this._onDataUpdate(updatedKeys);
+        } else if (isArray(updatedKeys)) {
+          updatedKeys.forEach((key) => this._onDataUpdate(key));
+        }
+        break;
+      default:
+        this._createBindings();
+        break;
     }
   },
 
@@ -90,13 +104,14 @@ const View = Klass({
   },
 
   _onDataUpdate(k) {
-    if (!this.bindings) {
-      this.bindings = {};
+    if (keys(this.bindings).length == 0) {
       this._createBindings(this.element);
     }
 
-    if (this.bindings[k]) {
-      each(this.bindings[k], (f) => {
+    const bKey = k.match(/[^\.[]+/)[0];
+
+    if (this.bindings[bKey]) {
+      each(this.bindings[bKey], (f) => {
         f.call(this);
       });
     }

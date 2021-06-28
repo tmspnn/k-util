@@ -128,7 +128,7 @@ const Counter = Klass(
       this.Super();
       this.element = document.getElementById("counter");
 
-      // Data binding. Call setData before using this.refs
+      // Data binding. Call setData before using this.refs and this.data
       this.setData({ clickTimes: 0 });
 
       // Make Methods callable from other components
