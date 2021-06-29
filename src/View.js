@@ -165,6 +165,11 @@ const View = Klass({
             }
           });
           break;
+        case "click":
+          if (v && this[v] == "function") {
+            el.addEventListener("click", this[v].bind(this));
+          }
+          break;
         default:
           break;
       }
