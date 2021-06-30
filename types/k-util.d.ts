@@ -40,16 +40,13 @@ export function View(): (...args: any[]) => {
   namespace: string;
   name: string;
   element: null | HTMLElement;
-  refs: null | { [k: string]: HTMLElement };
-  data: null | { [k: string]: any };
-  bindings: null | { [k: string]: () => void };
+  refs: { [k: string]: HTMLElement };
+  data: { [k: string]: any };
   constructor: (...args: any[]) => any;
-  setData: (k: string | { [k: string]: any }, v: any) => void;
   dispatch: (ptn: string, ...args: any[]) => void;
   listen: () => void;
   destroy: () => void;
   onBroadcast: (...args: any[]) => void;
   _eventHandler: (method: string, ...args: any[]) => void;
   _createBindings: (el: HTMLElement) => void;
-  _onDataUpdate: (arg: string | string[]) => void;
 };

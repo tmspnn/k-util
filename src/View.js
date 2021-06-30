@@ -1,11 +1,6 @@
-import at from "./at";
 import each from "./each";
 import Ee from "./Ee";
 import Klass from "./Klass";
-import put from "./put";
-
-const isArray = Array.isArray;
-const keys = Object.keys;
 
 const ENV = typeof window == "undefined" ? global : window;
 
@@ -26,48 +21,16 @@ const View = Klass({
 
   data: {},
 
-  bindings: {},
-
   constructor() {
     this.namespace = ENV.location
       ? ENV.location.pathname
       : ENV.process.title + " " + ENV.process.version;
   },
 
-  /**
-   * @param {String|Object} k
-   * @param {*} v
-   */
-  setData(k, v) {
-    switch (typeof k) {
-      case "string":
-        if (typeof v == "function") {
-          v(at(this.data, k));
-        } else {
-          put(this.data, k, v);
-        }
-        this._onDataUpdate(k);
-        break;
-      case "object":
-        if (k) {
-          each(k, (value, key) => {
-            put(this.data, key, value);
-            this._onDataUpdate(key);
-          });
-        }
-        break;
-      case "function":
-        const updatedKeys = k(this.data);
-        if (typeof updatedKeys == "string") {
-          this._onDataUpdate(updatedKeys);
-        } else if (isArray(updatedKeys)) {
-          updatedKeys.forEach((key) => this._onDataUpdate(key));
-        }
-        break;
-      default:
-        this._createBindings();
-        break;
-    }
+  listen() {
+    if (this.element) this._createBindings(this.element);
+    ee.on("global", this.onBroadcast, this);
+    ee.on(this.namespace + "::" + this.name, this._eventHandler, this);
   },
 
   dispatch(ptn, ...args) {
@@ -77,13 +40,17 @@ const View = Klass({
     ee.emit(this.namespace + "::" + viewName, method, ...args);
   },
 
-  listen() {
-    ee.on("global", this.onBroadcast, this);
-    ee.on(this.namespace + "::" + this.name, this._eventHandler, this);
+  onBroadcast() {},
+
+  broadcast(...args) {
+    ee.emit("global", ...args);
   },
 
   destroy() {
-    if (document.body.contains(this.element)) {
+    if (
+      typeof document != "undefined" &&
+      document.body.contains(this.element)
+    ) {
       this.element.parentNode.removeChild(this.element);
       this.element = null;
     }
@@ -91,29 +58,9 @@ const View = Klass({
     ee.off(this.namespace + "::" + this.name, this._eventHandler, this);
   },
 
-  broadcast(...args) {
-    ee.emit("global", ...args);
-  },
-
-  onBroadcast() {},
-
   _eventHandler(method, ...args) {
     if (typeof this[method] == "function") {
       this[method].call(this, ...args);
-    }
-  },
-
-  _onDataUpdate(k) {
-    if (keys(this.bindings).length == 0) {
-      this._createBindings(this.element);
-    }
-
-    const bKey = k.match(/[^\.[]+/)[0];
-
-    if (this.bindings[bKey]) {
-      each(this.bindings[bKey], (f) => {
-        f.call(this);
-      });
     }
   },
 
@@ -126,34 +73,12 @@ const View = Klass({
     each(el.dataset, (v, k) => {
       switch (k) {
         case "ref":
-          if (!this.refs) this.refs = {};
           this.refs[v] = el;
           break;
-        case ":":
-          each(v.split(";"), (pair) => {
-            const p = pair.split(":").map((txt) => txt.trim());
-            const attr = p[0];
-            const dataProp = p[1];
-
-            if (!dataProp) return;
-
-            const bd =
-              attr[0] == "@"
-                ? function () {
-                    this[attr.slice(1)]();
-                  }
-                : function () {
-                    put(el, attr, at(this.data, dataProp));
-                  };
-
-            const bKey = dataProp.match(/[^\.[]+/)[0];
-
-            if (!this.bindings[bKey]) {
-              this.bindings[bKey] = [bd];
-            } else {
-              this.bindings[bKey].push(bd);
-            }
-          });
+        case "click":
+          if (typeof this[v] == "function") {
+            el.addEventListener("click", this[v].bind(this));
+          }
           break;
         case "on":
           each(v.split(";"), (pair) => {
@@ -165,19 +90,12 @@ const View = Klass({
             }
           });
           break;
-        case "click":
-          if (v && this[v] == "function") {
-            el.addEventListener("click", this[v].bind(this));
-          }
-          break;
         default:
           break;
       }
     });
 
-    each(el.children, (ch) => {
-      this._createBindings(ch);
-    });
+    each(el.children, (ch) => this._createBindings(ch));
   }
 });
 

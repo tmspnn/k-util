@@ -108,12 +108,12 @@ d.super.logFoo(); // 2
 
 ```html
 <div id="counter">
-  <p data-ref="paragraph">
+  <p>
     You've clicked
-    <span data-:="textContent: clickTimes; @customCallBack: clickTimes">0</span>
+    <span data-ref="span">0</span>
     times!
   </p>
-  <button data-on="click: onBtnClick">Click Me</button>
+  <button data-click="onBtnClick">Click Me</button>
 </div>
 ```
 
@@ -124,30 +124,21 @@ const Counter = Klass(
   {
     name: "counter",
 
+    data: {
+      clickTimes: 0
+    },
+
     constructor() {
       this.Super();
       this.element = document.getElementById("counter");
 
-      // Data binding. Call setData before using this.refs and this.data
-      this.setData({ clickTimes: 0 });
-
-      // Make Methods callable from other components
+      // Add event listeners and make methods callable from other components
       this.listen();
     },
 
-    // Use "data-on" to register self-bind event listeners
+    // Event listeners added by 'data-click' or 'data-on' are bind to self
     onBtnClick() {
-      this.setData({
-        clickTimes: this.data.clickTimes + 1
-      });
-    },
-
-    // User "data-:" to declare data binding and custom callbacks
-    // Custom callback functions could be declared with '@ + method name': property
-    // Use "data-ref" to create DOM reference, could be access with 'this.refs'
-    customCallBask(...args) {
-      console.log(...args);
-      console.log(this.refs.paragraph);
+      this.refs.span.textContent = ++this.data.clickTimes;
     }
   },
   View
@@ -156,8 +147,11 @@ const counter = new Counter();
 
 const v = new View();
 
-// Will log "param1", "param2", "param3, and the HTMLParagraphElement
-v.dispatch("counter.customCallBask", "param1", "param2", "param3");
+counter.refs.span.dispatchEvent("click");
+console.log(counter.refs.span.textContent); // 1
+
+v.dispatch("counter.onBtnClick");
+console.log(counter.refs.span.textContent); // 2
 
 counter.destroy();
 v.destroy();
