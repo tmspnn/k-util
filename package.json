@@ -1,6 +1,6 @@
 {
   "name": "k-util",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "description": "JavaScript utility functions, could also be used as a frontend framework.",
   "main": "dist/k-util.js",
   "types": "types/k-util.d.ts",

@@ -17,14 +17,16 @@ const View = Klass({
 
   element: null,
 
-  refs: {},
+  refs: null,
 
-  data: {},
+  data: null,
 
   constructor() {
     this.namespace = ENV.location
       ? ENV.location.pathname
       : ENV.process.title + " " + ENV.process.version;
+    this.refs = {};
+    this.data = {};
   },
 
   listen() {
