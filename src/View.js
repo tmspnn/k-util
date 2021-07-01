@@ -69,9 +69,6 @@ const View = Klass({
   _createBindings(el) {
     if (!(el instanceof HTMLElement)) return;
 
-    if (/^-\w|\s+-\w/.test(el.className) || el.hasAttribute("data-view"))
-      return;
-
     each(el.dataset, (v, k) => {
       switch (k) {
         case "ref":
@@ -97,7 +94,12 @@ const View = Klass({
       }
     });
 
-    each(el.children, (ch) => this._createBindings(ch));
+    each(el.children, (ch) => {
+      if (/^-\w|\s+-\w/.test(el.className) || el.hasAttribute("data-view"))
+        return;
+
+      this._createBindings(ch);
+    });
   }
 });
 
