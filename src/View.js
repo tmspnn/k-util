@@ -95,7 +95,7 @@ const View = Klass({
     });
 
     each(el.children, (ch) => {
-      if (/^-\w|\s+-\w/.test(el.className) || el.hasAttribute("data-view"))
+      if (/^-\w|\s+-\w/.test(ch.className) || ch.hasAttribute("data-view"))
         return;
 
       this._createBindings(ch);
