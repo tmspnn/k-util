@@ -1,8 +1,7 @@
-// External modules
-const kutil = require("../dist/k-util");
-
 const test = require("ava");
-
+//
+const kutil = require("../dist/k-util");
+//
 test("Event Emitter", (t) => {
   const { Klass, View } = kutil;
 
@@ -29,23 +28,23 @@ test("Event Emitter", (t) => {
     {
       name: "c2",
 
-      broadcastArgs: null,
+      args: null,
 
       constructor() {
         this.Super();
         this.listen();
       },
 
-      onBroadcast(...args) {
-        this.broadcastArgs = args;
+      setArgs(...args) {
+        this.args = args;
       }
     },
     View
   );
   const c2 = new C2();
 
-  c1.broadcast(1, 2, 3);
-  t.deepEqual(c2.broadcastArgs, [1, 2, 3]);
+  c1.dispatch("c2.setArgs", 1, 2, 3);
+  t.deepEqual(c2.args, [1, 2, 3]);
 
   c2.dispatch("c1.setC1Prop", 100);
   t.is(c1.prop, 100);
@@ -53,8 +52,8 @@ test("Event Emitter", (t) => {
   c1.destroy();
   c2.destroy();
 
-  c1.broadcast(4, 5, 6, 7, 8);
-  t.deepEqual(c2.broadcastArgs, [1, 2, 3]);
+  c1.dispatch("c2.setArgs", 100);
+  t.deepEqual(c2.args, [1, 2, 3]);
 
   c2.dispatch("c1.setC1Prop", 23333);
   t.is(c1.prop, 100);

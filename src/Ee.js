@@ -4,7 +4,7 @@ const Ee = Klass({
   /**
    * @property {Array} subscriptions.*
    * @property {Function} subscriptions.*[*].listener
-   * @property {any} subscriptions.*[*].context
+   * @property {*} subscriptions.*[*].context
    */
   subscriptions: {},
 
@@ -26,7 +26,7 @@ const Ee = Klass({
         }
       });
     } else {
-      delete this.subscriptions[channel];
+      this.subscriptions[channel] = null;
     }
   },
 

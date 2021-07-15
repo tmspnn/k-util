@@ -33,7 +33,17 @@ test("at", (t) => {
 
   const a = [{}, { a: { b: [1, 2, { c: [1, 2, { d: 99 }] }] } }];
 
-  t.is(at(a, "[1].a.b[2].c[2].d"), 99);
+  t.is(at(a, 1, "a", "b", 2, "c", 2, "d"), 99);
+});
+
+test("clone", (t) => {
+  const { clone } = kutil;
+
+  const a = { x: [0, 1, { y: { c: { d: 100 } } }] };
+  const b = clone(a);
+
+  t.is(b == a, false);
+  t.is(b.x[2].y.c.d, 100);
 });
 
 test("each", (t) => {
@@ -64,12 +74,6 @@ test("Ee", (t) => {
   t.is(v, 100);
 });
 
-test("int", (t) => {
-  const { int } = kutil;
-  const a = int(1.234);
-  t.is(a, 1);
-});
-
 test("isBrowser", (t) => {
   with (dom.window) {
     const { isBrowser } = kutil;
@@ -85,15 +89,6 @@ test("parseJSON", (t) => {
 
   t.is(a, null);
   t.is(b.foo, 1);
-});
-
-test("put", (t) => {
-  const { put } = kutil;
-
-  const a = [{ a: [1, 2, { x: 0 }] }];
-  put(a, "[0].a[2].y", [1, 2, 3]);
-
-  t.is(a[0].a[2].y[2], 3);
 });
 
 test("toArray", (t) => {

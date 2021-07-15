@@ -1,3 +1,5 @@
+import clone from "./clone";
+
 const assign = Object.assign;
 const getPrototypeOf = Object.getPrototypeOf;
 const setPrototypeOf = Object.setPrototypeOf;
@@ -9,7 +11,7 @@ const setPrototypeOf = Object.setPrototypeOf;
  */
 export default function Klass(props, Base) {
   return function (...args) {
-    assign(this, props);
+    assign(this, clone(props));
 
     if (Base) {
       this.Super = function (...baseArgs) {
@@ -19,9 +21,9 @@ export default function Klass(props, Base) {
     }
 
     if (props.hasOwnProperty("constructor")) {
-      props.constructor.call(this, ...args);
+      this.constructor(...args);
     } else {
-      this.Super && this.Super();
+      this.Super && this.Super(...args);
     }
   };
 }

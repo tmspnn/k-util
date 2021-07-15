@@ -17,21 +17,20 @@ const View = Klass({
 
   element: null,
 
-  refs: null,
+  refs: {},
 
-  data: null,
+  data: {},
 
   constructor() {
     this.namespace = ENV.location
-      ? ENV.location.pathname
+      ? ENV.location.pathname + ENV.location.search
       : ENV.process.title + " " + ENV.process.version;
-    this.refs = {};
-    this.data = {};
   },
 
   listen() {
-    if (this.element) this._createBindings(this.element);
-    ee.on("global", this.onBroadcast, this);
+    if (this.element) {
+      this._createBindings(this.element);
+    }
     ee.on(this.namespace + "::" + this.name, this._eventHandler, this);
   },
 
@@ -42,10 +41,11 @@ const View = Klass({
     ee.emit(this.namespace + "::" + viewName, method, ...args);
   },
 
-  onBroadcast() {},
-
-  broadcast(...args) {
-    ee.emit("global", ...args);
+  dispatchNS(ns, ptn, ...args) {
+    const p = ptn.split(".");
+    const viewName = p[0];
+    const method = p[1];
+    ee.emit(ns + "::" + viewName, method, ...args);
   },
 
   destroy() {
@@ -56,7 +56,6 @@ const View = Klass({
       this.element.parentNode.removeChild(this.element);
       this.element = null;
     }
-    ee.off("global", this.onBroadcast, this);
     ee.off(this.namespace + "::" + this.name, this._eventHandler, this);
   },
 
