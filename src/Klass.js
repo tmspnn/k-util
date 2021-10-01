@@ -10,20 +10,21 @@ const setPrototypeOf = Object.setPrototypeOf;
  * @param {Function} Base
  */
 export default function Klass(props, Base) {
-  return function (...args) {
-    assign(this, clone(props));
+    return function(...args) {
+        if (Base) {
+            this.Super = function(...baseArgs) {
+                this.super = new Base(...baseArgs);
+                assign(this, this.super);
+                setPrototypeOf(getPrototypeOf(this), this.super);
+            };
+        }
 
-    if (Base) {
-      this.Super = function (...baseArgs) {
-        this.super = new Base(...baseArgs);
-        setPrototypeOf(getPrototypeOf(this), this.super);
-      };
-    }
+        if (props.hasOwnProperty("constructor")) {
+            props.constructor.call(this, ...args);
+        } else {
+            this.Super && this.Super(...args);
+        }
 
-    if (props.hasOwnProperty("constructor")) {
-      this.constructor(...args);
-    } else {
-      this.Super && this.Super(...args);
-    }
-  };
+        assign(this, clone(props));
+    };
 }
