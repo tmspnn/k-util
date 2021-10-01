@@ -4,7 +4,7 @@
  */
 export default function clone(o) {
   if (o && typeof o == "object") {
-    const cloned = {};
+    const cloned = o instanceof Array ? [] : {};
 
     for (let k in o) {
       if (o.hasOwnProperty(k)) {
