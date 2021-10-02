@@ -1,65 +1,48 @@
 const test = require("ava");
-//
 const kutil = require("../dist/k-util");
-//
-test("Event Emitter", (t) => {
-    const { Klass, View } = kutil;
 
-    const C1 = Klass(
-        {
-            name: "c1",
+test("View", async (t) => {
+    const { View } = kutil;
 
-            prop: null,
+    class C1 extends View {
+        name = "c1";
 
-            constructor(...args) {
-                this.Super();
-                this.listen();
-            },
+        foo = null;
 
-            setC1Prop(prop) {
-                this.prop = prop;
-            }
-        },
-        View
-    );
+        setFoo(foo) {
+            this.foo = foo;
+        }
+    }
+
+    class C2 extends View {
+        name = "c2";
+
+        bar = null;
+
+        setBar(bar) {
+            this.bar = bar;
+        }
+    }
+
     const c1 = new C1();
-    c1.listen();
-
-    const C2 = Klass(
-        {
-            name: "c2",
-
-            args: null,
-
-            constructor() {
-                this.Super();
-                this.listen();
-            },
-
-            setArgs(...args) {
-                this.args = args;
-            }
-        },
-        View
-    );
     const c2 = new C2();
-    c2.listen();
 
-    c1.dispatch("c2.setArgs", 1, 2, 3);
-    t.deepEqual(c2.args, [1, 2, 3]);
+    await new Promise((resolve) => {
+        setTimeout(() => resolve());
+    });
 
-    c2.dispatch("c1.setC1Prop", 100);
-    t.is(c1.prop, 100);
+    c1.dispatch("c2.setBar", 1);
+    t.is(c2.bar, 1);
+
+    c2.dispatch("c1.setFoo", 100);
+    t.is(c1.foo, 100);
 
     c1.destroy();
     c2.destroy();
 
-    c1.dispatch("c2.setArgs", 100);
-    t.deepEqual(c2.args, [1, 2, 3]);
+    c1.dispatch("c2.setBar", 100);
+    t.is(c2.bar, 1);
 
-    c2.dispatch("c1.setC1Prop", 23333);
-    t.is(c1.prop, 100);
-
-    t.is(c1.element, null);
-    t.is(c2.element, null);
+    c2.dispatch("c1.setFoo", 23333);
+    t.is(c1.foo, 100);
 });

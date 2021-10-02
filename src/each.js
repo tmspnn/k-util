@@ -1,19 +1,19 @@
 /**
- * Collections' forEach
+ * Iterate collections
  * @param {Array|Object} o
  * @param {Function(*, Number|String)} f
- * @returns Void
+ * @returns void
  */
 export default function each(o, f) {
-  if (o.length) {
-    for (let i = 0; i < o.length; ++i) {
-      f(o[i], i);
+    if (typeof o.length == "number") {
+        for (let i = 0; i < o.length; ++i) {
+            f(o[i], i);
+        }
+    } else {
+        for (let k in o) {
+            if (o.hasOwnProperty(k)) {
+                f(o[k], k);
+            }
+        }
     }
-  } else {
-    for (let k in o) {
-      if (o.hasOwnProperty(k)) {
-        f(o[k], k);
-      }
-    }
-  }
 }

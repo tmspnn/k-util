@@ -1,52 +1,81 @@
 import each from "./each";
-import Ee from "./Ee";
-import Klass from "./Klass";
+import ee from "./ee";
 
 const ENV = typeof window == "undefined" ? global : window;
 
-let ee = ENV._ee;
-
-if (!ee) {
-    ee = ENV._ee = new Ee();
+if (!ENV._ee) {
+    ENV._ee = ee;
 }
 
-const View = Klass({
-    namespace: "",
-
-    name: "",
-
-    element: null,
-
-    refs: {},
-
-    data: {},
-
+export default class View {
     constructor() {
         this.namespace = ENV.location
             ? ENV.location.pathname + ENV.location.search
             : ENV.process.title + " " + ENV.process.version;
-    },
 
-    listen() {
-        if (this.element) {
-            this._createBindings(this.element);
+        this.refs = {};
+
+        setTimeout(() => {
+            if (typeof this.name != "string") {
+                this.name = "";
+            }
+            if (this.element) {
+                this.bindElement(this.element);
+            }
+            ENV._ee.on(
+                this.namespace + "::" + this.name,
+                this.eventHandler,
+                this
+            );
+        });
+    }
+
+    bindElement(el) {
+        if (el.hasAttribute("data-ref")) {
+            const refName = el.getAttribute("data-ref");
+            this.refs[refName] = el;
         }
-        ee.on(this.namespace + "::" + this.name, this._eventHandler, this);
-    },
+
+        if (el.hasAttribute("data-click")) {
+            const method = el.getAttribute("data-click");
+            if (typeof this[method] == "function") {
+                el.addEventListener("click", this[method].bind(this));
+            }
+        }
+
+        if (el.hasAttribute("data-on")) {
+            const pairs = el.getAttribute("data-on").split(";");
+            pairs.forEach((pair) => {
+                const p = pair.split(":").map((txt) => txt.trim());
+                const e = p[0];
+                const h = p[1];
+                if (typeof this[h] == "function") {
+                    el.addEventListener(e, this[h].bind(this));
+                }
+            });
+        }
+
+        for (let i = 0; i < el.children.length; ++i) {
+            const ch = el.children[i];
+            if (!ch.hasAttribute("data-view")) {
+                this.bindElement(ch);
+            }
+        }
+    }
 
     dispatch(ptn, ...args) {
         const p = ptn.split(".");
         const viewName = p[0];
         const method = p[1];
-        ee.emit(this.namespace + "::" + viewName, method, ...args);
-    },
+        ENV._ee.emit(this.namespace + "::" + viewName, method, ...args);
+    }
 
     dispatchNS(ns, ptn, ...args) {
         const p = ptn.split(".");
         const viewName = p[0];
         const method = p[1];
-        ee.emit(ns + "::" + viewName, method, ...args);
-    },
+        ENV._ee.emit(ns + "::" + viewName, method, ...args);
+    }
 
     destroy() {
         if (
@@ -55,51 +84,18 @@ const View = Klass({
         ) {
             this.element.parentNode.removeChild(this.element);
             this.element = null;
+            this.refs = {};
         }
-        ee.off(this.namespace + "::" + this.name, this._eventHandler, this);
-    },
+        ENV._ee.off(
+            this.namespace + "::" + this.name,
+            this._eventHandler,
+            this
+        );
+    }
 
-    _eventHandler(method, ...args) {
+    eventHandler(method, ...args) {
         if (typeof this[method] == "function") {
             this[method].call(this, ...args);
         }
-    },
-
-    _createBindings(el) {
-        if (!(el instanceof HTMLElement)) return;
-
-        each(el.dataset, (v, k) => {
-            switch (k) {
-                case "ref":
-                    this.refs[v] = el;
-                    break;
-                case "click":
-                    if (typeof this[v] == "function") {
-                        el.addEventListener("click", this[v].bind(this));
-                    }
-                    break;
-                case "on":
-                    each(v.split(";"), (pair) => {
-                        const p = pair.split(":").map((txt) => txt.trim());
-                        const e = p[0];
-                        const h = p[1];
-                        if (e && typeof this[h] == "function") {
-                            el.addEventListener(e, this[h].bind(this));
-                        }
-                    });
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        each(el.children, (ch) => {
-            if (/^-\w|\s+-\w/.test(ch.className) || ch.hasAttribute("data-view"))
-                return;
-
-            this._createBindings(ch);
-        });
     }
-});
-
-export default View;
+}

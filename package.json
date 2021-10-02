@@ -1,35 +1,49 @@
 {
-  "name": "k-util",
-  "version": "0.3.19",
-  "description": "JavaScript utility functions, could also be used as a frontend framework.",
-  "main": "dist/k-util.js",
-  "types": "types/k-util.d.ts",
-  "scripts": {
-    "test": "npx ava --verbose",
-    "build": "NODE_ENV=production webpack"
-  },
-  "devDependencies": {
-    "ava": "^3.15.0",
-    "jsdom": "^16.6.0",
-    "webpack": "^5.40.0",
-    "webpack-cli": "^4.7.2"
-  },
-  "ava": {
-    "files": [
-      "test/**/*"
+    "name": "k-util",
+    "version": "0.4.0",
+    "description": "JavaScript utility functions, could also be used as a frontend framework.",
+    "main": "dist/k-util.js",
+    "types": "types/k-util.d.ts",
+    "scripts": {
+        "test": "npx ava --verbose",
+        "build": "NODE_ENV=production webpack",
+        "fmt": "npx prettier --write src",
+        "fmt-test": "npx prettier --write test"
+    },
+    "devDependencies": {
+        "ava": "^3.15.0",
+        "jsdom": "^16.6.0",
+        "webpack": "^5.40.0",
+        "webpack-cli": "^4.7.2"
+    },
+    "ava": {
+        "files": [
+            "test/**/*"
+        ],
+        "concurrency": 4,
+        "failFast": true
+    },
+    "prettier": {
+        "printWidth": 80,
+        "tabWidth": 4,
+        "useTabs": false,
+        "semi": true,
+        "singleQuote": false,
+        "quoteProps": "consistent",
+        "jsxSingleQuote": false,
+        "trailingComma": "none",
+        "bracketSpacing": true,
+        "arrowParens": "always"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tmspnn/k-util"
+    },
+    "keywords": [
+        "k-util",
+        "utility",
+        "framework"
     ],
-    "concurrency": 4,
-    "failFast": true
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tmspnn/k-util"
-  },
-  "keywords": [
-    "k-util",
-    "utility",
-    "framework"
-  ],
-  "author": "Thomas Peng Li",
-  "license": "MIT"
+    "author": "Thomas Peng Li",
+    "license": "MIT"
 }
