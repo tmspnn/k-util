@@ -19,8 +19,8 @@ npm i k-util
 
 ```html
 <div id="counter">
-    <p data-ref="p"></p>
-    <button data-click="onBtnClick">Click Me</button>
+	<p data-ref="p"></p>
+	<button data-click="onBtnClick">Click Me</button>
 </div>
 ```
 
@@ -28,30 +28,29 @@ npm i k-util
 import { View } from "k-util";
 
 class Counter extends View {
-    name = "counter";
+	name = "counter";
 
-    times = 0;
+	clicked = 0;
 
-    element = document.getElementById("counter");
-
-    onBtnClick() {
-        this.refs.p.textContent = ++this.times;
-    }
+	onBtnClick() {
+		this.refs.p.textContent = ++this.clicked;
+	}
 }
 
-const counter = new Counter();
-const v = new View();
+const counter = new Counter(document.getElementById("counter"));
+const controller = new View();
 
-// Components' initialization is asynchronous
+// Components' initialization is asynchronous.
 setTimeout(() => {
-    counter.refs.btn.dispatchEvent(new Event("click"));
-    console.log(counter.refs.p.textContent); // 1
+	counter.refs.btn.click();
+	console.log(counter.refs.p.textContent); // 1
 
-    v.dispatch("counter.onBtnClick");
-    console.log(counter.refs.p.textContent); // 2
+	// Call method from an external component.
+	controller.dispatch("counter.onBtnClick");
+	console.log(counter.refs.p.textContent); // 2
 
-    counter.destroy(); // Will remove the counter element from DOM tree
-    v.destroy();
+	counter.destroy(); // Will remove the counter element from DOM tree
+	v.destroy();
 });
 ```
 
