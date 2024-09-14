@@ -4,7 +4,7 @@ import stringToElement from "./stringToElement.js";
 
 export const viewEventEmitter = new CustomEventEmitter();
 
-const View = Class({
+export const View = Class({
     displayName: "CustomClass View",
 
     eventEmitter: viewEventEmitter,
@@ -85,5 +85,3 @@ const View = Class({
         this.refs = {};
     }
 })
-
-export default View;
