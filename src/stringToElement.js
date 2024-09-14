@@ -5,6 +5,7 @@ const parser = new DOMParser();
  * @returns HTMLElement
  */
 export default function stringToElement(html) {
-	const doc = parser.parseFromString(html, "text/html");
-	return doc.body.firstChild;
+    const doc = parser.parseFromString(html, "text/html");
+
+    return doc.body.firstChild;
 }

@@ -1,38 +1,31 @@
 {
-	"name": "k-util",
-	"version": "0.4.1",
-	"description": "JavaScript utility functions, could also be used as a frontend framework.",
-	"engines": {
-		"node": ">=18.6.0"
-	},
-	"type": "module",
-	"main": "src/kutil.js",
-	"types": "kutil.d.ts",
-	"scripts": {
-		"test": "node --test",
-		"build": "NODE_ENV=production webpack"
-	},
-	"devDependencies": {
-		"jsdom": "^20.0.0",
-		"webpack": "^5.73.0",
-		"webpack-cli": "^4.10.0"
-	},
-	"prettier": {
-		"tabWidth": 4,
-		"useTabs": true,
-		"quoteProps": "consistent",
-		"trailingComma": "none",
-		"bracketSameLine": true
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/tmspnn/k-util"
-	},
-	"keywords": [
-		"k-util",
-		"utility",
-		"framework"
-	],
-	"author": "Thomas Peng Li",
-	"license": "MIT"
+    "name": "k-util",
+    "version": "0.4.2",
+    "description": "Useful utility functions for front-end development.",
+    "engines": {
+        "node": ">=18.6.0"
+    },
+    "type": "module",
+    "main": "dist/k-util.mjs",
+    "types": "k-util.d.ts",
+    "scripts": {
+        "test": "node --test",
+        "build": "esbuild src/k-util.js --bundle --outfile=k-util.mjs --platform=neutral"
+    },
+    "devDependencies": {
+        "esbuild": "^0.23.1",
+        "jsdom": "^20.0.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tmspnn/k-util"
+    },
+    "keywords": [
+        "k-util",
+        "utility",
+        "framework"
+    ],
+    "author": "Thomas Peng Li",
+    "license": "MIT",
+    "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c"
 }

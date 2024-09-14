@@ -1,113 +1,89 @@
-import each from "./each.js";
-import ee from "./ee.js";
+import Class fro "./Class.js";
+import CustomEventEmitter from "./CustomEventEmitter.js";
 import stringToElement from "./stringToElement.js";
 
-const ENV = typeof window == "undefined" ? global : window;
+export const viewEventEmitter = new CustomEventEmitter();
 
-if (!ENV._ee) {
-	ENV._ee = ee;
-}
+const View = Class({
+    displayName: "CustomClass View",
 
-export default class View {
-	/**
-	 * @param {HTMLElement | string} strOrEl
-	 */
-	constructor(strOrEl) {
-		if (typeof strOrEl == "object") {
-			this.element = strOrEl;
-		} else if (typeof strOrEl == "string") {
-			this.element = stringToElement(strOrEl);
-		}
+    eventEmitter: viewEventEmitter,
 
-		this.refs = {};
+    /**
+     * @type {null | HTMLElement}
+     */
+    element: null,
 
-		setTimeout(() => {
-			if (typeof this.namespace != "string") {
-				this.namespace = "";
-			}
+    /**
+     * @type {Record<string, HTMLElement>}
+     */
+    refs: {},
 
-			if (typeof this.name != "string") {
-				this.name = "";
-			}
+    /**
+     * @param {string | HTMLElement} strOrEl
+     */
+    init(strOrEl) {
+        if (typeof strOrEl == "string") {
+            this.element = stringToElement(strOrEl);
+        } else if (typeof strOrEl == "object") {
+            this.element = strOrEl;
+        } else {
+            throw new TypeError(`View.init(strOrEl: string | HTMLElement) does not recognize ${String(strOrEl)}.`);
+        }
 
-			if (this.element) {
-				this.bindElement(this.element);
-			}
+        this.refs = {self: this.element};
 
-			ENV._ee.on(
-				this.namespace + ":" + this.name,
-				this.eventHandler,
-				this
-			);
-		});
-	}
+        this.traverse(this.element)
+    },
 
-	bindElement(el) {
-		if (el.hasAttribute("data-ref")) {
-			const refName = el.getAttribute("data-ref");
-			this.refs[refName] = el;
-		}
+    /**
+     * @param {HTMLElement} el
+     */
+    traverse(el) {
+        if (el.hasAttribute("data-ref")) {
+            const refName = el.getAttribute("data-ref");
+            this.refs[refName] = el;
+        }
 
-		if (el.hasAttribute("data-click")) {
-			const method = el.getAttribute("data-click");
+        if (el.hasAttribute("data-click")) {
+            const method = el.getAttribute("data-click");
 
-			if (typeof this[method] == "function") {
-				el.addEventListener("click", this[method].bind(this));
-			}
-		}
+            if (typeof this[method] == "function") {
+                el.addEventListener("click", this[method].bind(this));
+            }
+        }
 
-		if (el.hasAttribute("data-on")) {
-			const pairs = el.getAttribute("data-on").split(";");
+        if (el.hasAttribute("data-on")) {
+            const pairs = el.getAttribute("data-on").split(";");
 
-			pairs.forEach((pair) => {
-				const p = pair.split(":").map((txt) => txt.trim());
-				const e = p[0];
-				const h = p[1];
+            pairs.forEach((pair) => {
+                const p = pair.split(":").map((txt) => txt.trim());
+                const e = p[0];
+                const h = p[1];
 
-				if (typeof this[h] == "function") {
-					el.addEventListener(e, this[h].bind(this));
-				}
-			});
-		}
+                if (typeof this[h] == "function") {
+                    el.addEventListener(e, this[h]);
+                }
+            });
+        }
 
-		for (let i = 0; i < el.children.length; ++i) {
-			const ch = el.children[i];
+        for (var i = 0; i < el.children.length; ++i) {
+            const ch = el.children[i];
 
-			if (!ch.hasAttribute("data-view")) {
-				this.bindElement(ch);
-			}
-		}
-	}
+            if (!ch.hasAttribute("data-view")) {
+                this.traverse(ch);
+            }
+        }
+    },
 
-	dispatch(ptn, ...args) {
-		const p = ptn.split(".");
-		const viewName = p[0];
-		const method = p[1];
-		ENV._ee.emit(this.namespace + ":" + viewName, method, ...args);
-	}
+    destroy() {
+        if (document.body.contains(this.element)) {
+            this.element.parentNode.removeChild(this.element);
+        }
 
-	dispatchNS(ns, ptn, ...args) {
-		const p = ptn.split(".");
-		const viewName = p[0];
-		const method = p[1];
-		ENV._ee.emit(ns + ":" + viewName, method, ...args);
-	}
+        this.element = null;
+        this.refs = {};
+    }
+})
 
-	destroy() {
-		if (
-			typeof document != "undefined" &&
-			document.body.contains(this.element)
-		) {
-			this.element.parentNode.removeChild(this.element);
-			this.element = null;
-			this.refs = {};
-		}
-		ENV._ee.off(this.namespace + ":" + this.name, this.eventHandler, this);
-	}
-
-	eventHandler(method, ...args) {
-		if (typeof this[method] == "function") {
-			this[method].call(this, ...args);
-		}
-	}
-}
+export default View;

@@ -1,10 +1,16 @@
-class Ee {
+export default class CustomEventEmitter {
     constructor() {
-        this.subscriptions = {};
+        this.displayName = "CustomEventEmitter";
+        this.subscriptions = {}
     }
 
+    /**
+     * @param {string | symbol} channel
+     * @param {(...args: any) => void} listener
+     * @param {*} context
+     */
     on(channel, listener, context) {
-        const sub = { listener, context };
+        const sub = {listener, context};
 
         if (this.subscriptions[channel]) {
             this.subscriptions[channel].push(sub);
@@ -13,8 +19,15 @@ class Ee {
         }
     }
 
+    /**
+     * @param {string | symbol} channel
+     * @param {(...args: any) => void} listener
+     * @param {*} context
+     */
     off(channel, listener, context) {
-        if (!this.subscriptions[channel]) return;
+        if (!this.subscriptions[channel]) {
+            return;
+        }
 
         if (listener) {
             this.subscriptions[channel].forEach((sub, i) => {
@@ -27,13 +40,17 @@ class Ee {
         }
     }
 
+    /**
+     * @param {string | symbol} channel
+     * @param {any[]} args
+     */
     emit(channel, ...args) {
         if (this.subscriptions[channel]) {
             this.subscriptions[channel].forEach((sub) => {
-                sub && sub.listener.call(sub.context, ...args);
+                if (sub) {
+                    sub.listener.call(sub.context, ...args);
+                }
             });
         }
     }
 }
-
-export default new Ee();
