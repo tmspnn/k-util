@@ -2,68 +2,158 @@
 
 Useful utility functions for front-end development.
 
-**2KB** Gzipped, no dependencies, compatible with all modern browsers (Chrome 42+, Edge 13+, Safari 9+, Firefox 45+).
+-   A helper function `Class` for convenient object-oriented patterns (this binding, static properties, inheritance and implementing interfaces).
 
--   [k-util](#k-util)
-    -   [Installation](#installation)
-    -   [Get Started](#get-started)
-    -   [Documentation](#documentation)
+-   A small class `CustomEventEmitter` for custom events.
+
+-   A custom class `View` for communicative UI components with easy DOM reference binding and adding event listeners.
+
+-   A helper function `kxhr` for making HTTP requests.
+
+-   A helper function `stringToElement` for creating DOM element with string.
+
+-   **2KB** Gzipped, no dependencies, compatible with all modern browsers (Chrome 42+, Edge 13+, Safari 9+, Firefox 45+).
 
 ## Installation
 
-```
+```shell
 npm i k-util
+```
+
+```html
+<script src="node_modules/k-util/dist/kutil.min.js"></script>
 ```
 
 ## Get Started
 
+```javascript
+import { Class } from "k-util";
+
+const A = Class({
+    name: "A",
+    getName() {
+        return this.name;
+    }
+});
+
+const InterfaceX = {
+    x: "foo",
+    getX() {
+        return this.x;
+    },
+    setX(x) {
+        this.x = x;
+    }
+};
+
+const B = Class({ name: "B" }).inherit(A).implement(InterfaceX);
+
+const b = new B();
+
+b instanceof A; // true
+
+b.getName(); // "B"
+
+b.x; // "foo"
+
+b.setX("bar");
+
+b.getX(); // "bar"
+```
+
+```javascript
+import { CustomEventEmitter } from "k-util";
+
+const ee = new CustomEventEmitter();
+
+let count = 0;
+
+function addOne() {
+    count += 1;
+}
+
+ee.on("add", addOne);
+
+ee.emit("add");
+
+count; // 1
+
+ee.off("add", addOne);
+
+ee.emit("add");
+
+count; // 1
+```
+
 ```html
 <div id="counter">
-	<p data-ref="p"></p>
-	<button data-click="onBtnClick">Click Me</button>
+    <p data-ref="p"></p>
+    <button data-ref="btn" data-click="onBtnClick">Click Me!</button>
 </div>
 ```
 
 ```javascript
 import { View } from "k-util";
 
-class Counter extends View {
-	name = "counter";
+const counter = new View({
+    count: 0,
+    onBtnClick() {
+        this.count += 1;
+        this.refs.p.textContent = this.count.toString();
+    }
+}).init(document.getElementById("counter"));
 
-	clicked = 0;
+counter.refs.btn.click();
 
-	onBtnClick() {
-		this.refs.p.textContent = ++this.clicked;
-	}
-}
+counter.count; // 1
 
-const counter = new Counter(document.getElementById("counter"));
-const controller = new View();
+counter.eventEmitter; // a CustomEventEmitter
+```
 
-// Components' initialization is asynchronous.
-setTimeout(() => {
-	counter.refs.btn.click();
-	console.log(counter.refs.p.textContent); // 1
+```javascript
+import { kxhr } from "k-util";
 
-	// Call method from an external component.
-	controller.dispatch("counter.onBtnClick");
-	console.log(counter.refs.p.textContent); // 2
+const res = await kxhr(
+    "https://jsonplaceholder.typicode.com/posts",
+    "post",
+    JSON.stringify({
+        id: 1,
+        data: "foo"
+    }),
+    { contentType: "application/json" }
+);
 
-	counter.destroy(); // Will remove the counter element from DOM tree
-	v.destroy();
-});
+const json = JSON.parse(res);
+```
+
+```javascript
+import { stringToElement } from "k-util";
+
+stringToElement("<div>Hello!</div>"); // HTMLDivElement
 ```
 
 ## Documentation
 
-| API          | Type          | Description                                                                                                                                                                                              |
-| ------------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `data-view`  | HTML          | Component label. If a child of `this.element` has this attribute, the child and its children won't be put into `this.refs`                                                                               |
-| `data-click` | HTML          | Bind click listener, method will bind to `this` automatically.                                                                                                                                           |
-| `data-on`    | HTML          | Bind event listeners, multiple event-handler pairs seperated by `;`. `data-on="click: onClick; input: onInput;"` methods will bind to `this` automatically                                               |
-| `data-ref`   | HTML          | Declare DOM reference, could be refered later in `this.refs`                                                                                                                                             |
-| name         | View Property | default ""                                                                                                                                                                                               |
-| element      | View Property | Required for front-end components                                                                                                                                                                        |
-| refs         | View Property | default {}                                                                                                                                                                                               |
-| dispatch     | View Method   | Call other components' method. `this.dispatch("anotherComponent.someMethod", 1, 2, 3)` will call the method `someMethod` of the component with name "anotherComponent", `1, 2, 3` will be the parameters |
-| destroy      | View Method   | Will remove `this.element` from the DOM tree, and stop listening calls from other components                                                                                                             |
+-   `Class(proto: Record<string, any>): CustomClass`
+
+    -   `_isCustomClass: true`
+    -   `_implementedInterfaces: Record<string, any>[]`
+    -   `static(staticProps: Record<string, any>): this`
+    -   `inherit(Base: CustomClass): this`
+    -   `implement(...args: Record<string, any>): this`
+
+-   `CustomEventEmitter`
+
+    -   `on(channel: string | symbol, listener: (...args: any) => void, context?: any): void`
+    -   `off(channel: string | symbol, listener?: (...args: any) => void, context?: any): void`
+    -   `emit(channel: string | symbol, ...args: any): void`
+
+-   `View`
+
+    -   `eventEmitter: CustomEventEmitter`
+    -   `element: null | HTMLElement`
+    -   `refs: Record<string, HTMLElement>`
+    -   `init(strOrEl: string | HTMLElement): this`
+    -   `destroy(): void`
+
+-   `kxhr(url: string, method: "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH", data: any, options: { contentType: string, headers: Record<string, string>, withCredentials?: boolean, timeout?: number, onProgress: (e: ProgressEvent) => void, beforeSend: (xhr: XMLHttpRequest) => void }): Kxhr`
