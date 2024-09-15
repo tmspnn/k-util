@@ -7,7 +7,7 @@ export default class CustomEventEmitter {
     /**
      * @param {string | symbol} channel
      * @param {(...args: any) => void} listener
-     * @param {*} context
+     * @param {*} [context]
      */
     on(channel, listener, context) {
         const sub = {listener, context};
@@ -21,8 +21,8 @@ export default class CustomEventEmitter {
 
     /**
      * @param {string | symbol} channel
-     * @param {(...args: any) => void} listener
-     * @param {*} context
+     * @param {(...args: any) => void} [listener]
+     * @param {*} [context]
      */
     off(channel, listener, context) {
         if (!this.subscriptions[channel]) {

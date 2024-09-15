@@ -1,30 +1,73 @@
 export as namespace kutil;
 
-export function at(o: any, ...paths: Array<number | string>): any;
+export class CustomClass {
+    constructor(initialValues?: Record<string|symbol, any>);
 
-export function each(
-	o: Record<string, any>,
-	f: (v: any, k: number | string) => void
-): void;
+    _isCustomClass: true;
 
-export function stringToElement(s: string): null | HTMLElement;
+    _implementedInterfaces: Record<string, any>[];
+
+    static(staticProps: Record<string, any>): this;
+
+    inherit(Base: CustomClass): this;
+
+    implement(...interfaces: Record<string, any>[]): this;
+};
+
+export function Class(proto: Record<string, any>): CustomClass;
+
+export class CustomEventEmitter {
+    constructor();
+
+    on(channel: string|symbol, listener: (...args: any) => void, context?: any): void;
+
+    off(channel: string|symbol, listener?: (...args: any) => void, context?: any): void;
+
+    emit(channel: string|symbol, ...args: any[]): void;
+}
 
 export class View {
-	namespace: string;
+    constructor();
 
-	name: string;
+    eventEmitter: CustomEventEmitter;
 
-	refs: Record<string, HTMLElement>;
+    element: null|HTMLElement;
 
-	bindElement: (el: HTMLElement) => void;
+    refs: Record<string, HTMLElement>;
 
-	eventHandler: (method: string, ...args: any[]) => void;
+    init(strOrEl: string|HTMLElement): this;
 
-	dispatch: (ptn: string, ...args: any[]) => void;
-
-	dispatchNS: (ns: string, ptn: string, ...args: any[]) => void;
-
-	destroy: () => void;
-
-	element?: null | HTMLElement;
+    destroy(): void;
 }
+
+export type Kxhr = {
+    state: "pending"|"resolved"|"rejected"|"cancelled";
+
+    result: any;
+
+    err: null | Error;
+
+    callbacks: Array<{type: "resolve" | "reject" | "finally", f: (result: any) => void}>;
+
+    xhr: XMLHttpRequest;
+};
+
+export function kxhr(
+    url: string,
+
+    method?: "GET"|"HEAD"|"POST"|"PUT"|"DELETE"|"CONNECT"|"OPTIONS"|"TRACE"|"PATCH",
+
+    data?: any,
+
+    options?: Partial<{
+        contentType: string,
+        headers: Record<string, string>,
+        withCredentials: boolean,
+        timeout: number,
+        onProgress: (e: ProgressEvent) => void,
+        beforeSend: (xhr: XMLHttpRequest) => void
+    }>,
+
+    ): Kxhr;
+
+export function stringToElement(s: string): null|HTMLElement;
