@@ -1,16 +1,19 @@
 {
     "name": "k-util",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "description": "Useful utility functions for front-end development.",
     "engines": {
         "node": ">=18.6.0"
     },
     "type": "module",
-    "main": "dist/k-util.mjs",
-    "types": "k-util.d.ts",
+    "main": "dist/kutil.mjs",
+    "browser": "dist/kutil.min.js",
+    "types": "kutil.d.ts",
     "scripts": {
         "test": "node --test",
-        "build": "esbuild src/k-util.js --bundle --outfile=k-util.mjs --platform=neutral"
+        "build": "pnpm run /build:/",
+        "build:esm": "esbuild src/kutil.js --bundle --outfile=dist/kutil.mjs --platform=neutral",
+        "build:browser": "esbuild src/kutil.js --bundle --minify --global-name=kutil --outfile=dist/kutil.min.js"
     },
     "devDependencies": {
         "esbuild": "^0.23.1",
@@ -22,6 +25,8 @@
     },
     "keywords": [
         "k-util",
+        "k-xhr",
+        "XMLHttpRequest",
         "utility",
         "framework"
     ],

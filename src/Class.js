@@ -76,7 +76,7 @@ function copyAndBind(target, source, thisArg) {
         } else if (typeof v == "function") {
             target[k] = v.bind(self);
         } else {
-            target[k] = {};
+            target[k] = Array.isArray(v) ? [] : {};
             copyAndBind(target[k], v, self);
         }
     });

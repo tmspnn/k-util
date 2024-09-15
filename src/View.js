@@ -1,11 +1,11 @@
-import Class fro "./Class.js";
+import Class from "./Class.js";
 import CustomEventEmitter from "./CustomEventEmitter.js";
 import stringToElement from "./stringToElement.js";
 
 export const viewEventEmitter = new CustomEventEmitter();
 
 export const View = Class({
-    displayName: "CustomClass View",
+    displayName: "CustomClass [[ View ]]",
 
     eventEmitter: viewEventEmitter,
 
@@ -34,6 +34,8 @@ export const View = Class({
         this.refs = {self: this.element};
 
         this.traverse(this.element)
+
+        return this;
     },
 
     /**

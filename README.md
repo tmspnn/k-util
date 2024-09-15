@@ -1,8 +1,8 @@
 # k-util
 
-A Helper Class for Building Communicative Components.
+Useful utility functions for front-end development.
 
-**1.5KB** Gzipped, no dependencies, compatible with all modern browsers.
+**2KB** Gzipped, no dependencies, compatible with all modern browsers (Chrome 42+, Edge 13+, Safari 9+, Firefox 45+).
 
 -   [k-util](#k-util)
     -   [Installation](#installation)
