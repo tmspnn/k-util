@@ -116,7 +116,7 @@ function cancel() {
         const cb = this.callbacks[i];
 
         if (cb.type == "finally") {
-            cb.f(this.xhr)
+            cb.f(this.xhr);
 
             break;
         }
@@ -149,7 +149,7 @@ function next() {
             } else if (cb.type == "reject") {
                 this.result.catch(cb.f);
             } else if (cb.type == "finally") {
-                this.result.finally(cb.f)
+                this.result.finally(cb.f);
             }
         } else if (this.state == "resolved" && cb.type == "resolve") {
             try {
@@ -162,7 +162,7 @@ function next() {
             this.result = cb.f(this.err);
             this.state = "resolved";
         } else if (cb.type == "finally") {
-            cb.f(this.xhr)
+            cb.f(this.xhr);
         }
     }
 }
