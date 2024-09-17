@@ -155,5 +155,10 @@ stringToElement("<div>Hello!</div>"); // HTMLDivElement
     -   `refs: Record<string, HTMLElement>`
     -   `init(strOrEl: string | HTMLElement): this`
     -   `destroy(): void`
+    -   Custom HTML attributes:
+        - `data-view="myComponent"`. If an element has attribute `data-view`, it will be seen as a component and it will **NOT** be in the `refs` of its parent.
+        - `data-ref="myRef"`. 
+        - `data-click="myOnClick"`.
+        - `data-on="touchstart: myOnTouchStart; touchmove: myOnTouchMove; touchend: myOnTouchEnd;"`. Separate listeners by semicolons;
 
 -   `kxhr(url: string, method: "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH", data: any, options: { contentType: string, headers: Record<string, string>, withCredentials?: boolean, timeout?: number, onProgress: (e: ProgressEvent) => void, beforeSend: (xhr: XMLHttpRequest) => void }): Kxhr`
