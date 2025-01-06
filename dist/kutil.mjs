@@ -11,14 +11,14 @@ function Class(proto = {}) {
   C.static = function(o) {
     return Object.assign(C, o);
   };
-  C.inherit = function(B) {
+  C.extends = function(B) {
     if (!B._isCustomClass) {
-      throw new TypeError("CustomClass.inherit requires a custom class, but received: " + String(B));
+      throw new TypeError(`${String(B)} is not a CustomClass.`);
     }
     Object.setPrototypeOf(C.prototype, B.prototype);
     return C;
   };
-  C.implement = function(...interfaces) {
+  C.implements = function(...interfaces) {
     C._implementedInterfaces = interfaces;
     return C;
   };
@@ -256,7 +256,7 @@ var View = Class({
     if (el.hasAttribute("data-click")) {
       const method = el.getAttribute("data-click");
       if (typeof this[method] == "function") {
-        el.addEventListener("click", this[method].bind(this));
+        el.addEventListener("click", this[method]);
       }
     }
     if (el.hasAttribute("data-on")) {

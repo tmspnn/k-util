@@ -46,7 +46,7 @@ const InterfaceX = {
     }
 };
 
-const B = Class({ name: "B" }).inherit(A).implement(InterfaceX);
+const B = Class({ name: "B" }).extends(A).implements(InterfaceX);
 
 const b = new B();
 
@@ -139,8 +139,8 @@ stringToElement("<div>Hello!</div>"); // HTMLDivElement
     -   `_isCustomClass: true`
     -   `_implementedInterfaces: Record<string, any>[]`
     -   `static(staticProps: Record<string, any>): this`
-    -   `inherit(Base: CustomClass): this`
-    -   `implement(...args: Record<string, any>): this`
+    -   `extends(Base: CustomClass): this`
+    -   `implements(...args: Record<string, any>): this`
 
 -   `CustomEventEmitter`
 

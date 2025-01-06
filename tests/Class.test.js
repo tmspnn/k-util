@@ -7,7 +7,7 @@ test("Class", async (t) => {
     await t.test("Inheritance", (t) => {
         const A = Class({name: "A", getName() { return this.name; }});
 
-        const B = Class({name: "B"}).inherit(A);
+        const B = Class({name: "B"}).extends(A);
 
         const b = new B();
 
@@ -41,7 +41,7 @@ test("Class", async (t) => {
             setX(x) { this.x = x; }
         }
 
-        const F = Class().implement(interfaceX);
+        const F = Class().implements(interfaceX);
 
         const f = new F();
 

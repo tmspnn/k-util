@@ -51,7 +51,7 @@ export const View = Class({
             const method = el.getAttribute("data-click");
 
             if (typeof this[method] == "function") {
-                el.addEventListener("click", this[method].bind(this));
+                el.addEventListener("click", this[method]);
             }
         }
 
