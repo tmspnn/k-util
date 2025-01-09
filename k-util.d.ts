@@ -9,9 +9,9 @@ export class CustomClass {
 
     static(staticProps: Record<string, any>): this;
 
-    inherit(Base: CustomClass): this;
+    extends(Base: CustomClass): this;
 
-    implement(...interfaces: Record<string, any>[]): this;
+    implements(...interfaces: Record<string, any>[]): this;
 };
 
 export function Class(proto: Record<string, any>): CustomClass;
@@ -39,6 +39,8 @@ export class View {
 
     destroy(): void;
 }
+
+declare const viewEventEmitter: CustomEventEmitter;
 
 export type Kxhr = {
     state: "pending"|"resolved"|"rejected"|"cancelled";

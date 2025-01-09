@@ -1,6 +1,6 @@
 {
     "name": "k-util",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "description": "Useful utility functions for front-end development.",
     "engines": {
         "node": ">=18.6.0"
